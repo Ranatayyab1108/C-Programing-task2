@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+struct Course {
+    double grade;
+    double credit;
+};
+
+int main() {
+    int n;
+    cout << "Enter number of courses: ";
+    cin >> n;
+    vector<Course> courses;
+    courses.reserve(n);
+
+    for (int i = 0; i < n; ++i) {
+        double g, c;
+        cout << "Course #" << (i + 1) << " — Grade (e.g. 3.7): ";
+        cin >> g;
+        cout << "Course #" << (i + 1) << " — Credit hours: ";
+        cin >> c;
+        courses.push_back({g, c});
+    }
+
+    double totalCredits = 0.0;
+    double totalGradePoints = 0.0;
+
+    cout << "\n--- Individual Course Details ---\n";
+    cout << left << setw(10) << "Course"
+         << setw(10) << "Grade"
+         << setw(15) << "Credit Hours"
+         << setw(15) << "Grade Points" << "\n";
+
+    for (int i = 0; i < n; ++i) {
+        double gp = courses[i].grade * courses[i].credit;
+        totalCredits += courses[i].credit;
+        totalGradePoints += gp;
+
+        cout << left << setw(10) << (i + 1)
+             << setw(10) << fixed << setprecision(2) << courses[i].grade
+             << setw(15) << courses[i].credit
+             << setw(15) << gp << "\n";
+    }
+
+    double semesterGPA = 0.0;
+    if (totalCredits > 0) {
+        semesterGPA = totalGradePoints / totalCredits;
+    }
+
+    cout << "\nTotal Credit Hours: " << totalCredits << "\n";
+    cout << "Total Grade Points: " << totalGradePoints << "\n";
+    cout << "Semester GPA: " << fixed << setprecision(2) << semesterGPA << "\n";
+
+    // If you have previous CGPA data, you can extend this:
+    char answer = 'n';
+    cout << "\nDo you want to compute cumulative CGPA? (y/n): ";
+    cin >> answer;
+    if (tolower(answer) == 'y') {
+        double prevCredits, prevGPA;
+        cout << "Enter previous total credits: ";
+        cin >> prevCredits;
+        cout << "Enter previous CGPA: ";
+        cin >> prevGPA;
+
+        double prevGradePoints = prevGPA * prevCredits;
+        double newTotalCredits = prevCredits + totalCredits;
+        double newTotalGradePoints = prevGradePoints + totalGradePoints;
+
+        double newCGPA = (newTotalCredits > 0)
+                         ? newTotalGradePoints / newTotalCredits
+                         : 0.0;
+
+        cout << "\nNew Cumulative CGPA: " << fixed
+             << setprecision(2) << newCGPA << "\n";
+    }
+
+    return 0;
+}
